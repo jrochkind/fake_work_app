@@ -10,6 +10,7 @@ gem 'rails', '3.2.13'
 # No db at all!
 #gem 'sqlite3'
 
+gem "thin" # thin branch!
 
 # Gems used only for assets and not required
 # in production environments by default.
