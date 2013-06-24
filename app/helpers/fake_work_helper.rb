@@ -1,0 +1,2 @@
+module FakeWorkHelper
+end
