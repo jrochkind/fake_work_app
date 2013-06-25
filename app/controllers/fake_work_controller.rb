@@ -1,9 +1,9 @@
 class FakeWorkController < ApplicationController
 
   def index
-    cpu_ms          = params["cpu_ms"] || 50 
-    iowait_ms       = params["iowait_ms"] || 250 
-    response_chars  = params["response_chars"] || 20000 
+    cpu_ms          = (params["cpu_ms"] || 50).to_i
+    iowait_ms       = (params["iowait_ms"] || 250 ).to_i
+    response_chars  = (params["response_chars"] || 20000 ).to_i
     
     start = Time.now
 
