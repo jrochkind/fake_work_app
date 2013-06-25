@@ -62,6 +62,9 @@
 2013-06-24 22:58:56,    477,      29.98,           9,       1.11,       15.91,        0.30,       17.60,     477,       0
 2013-06-24 22:59:36,    515,      29.96,           9,       1.08,       17.19,        0.30,       18.62,     515,       0
 2013-06-24 23:00:16,    510,      29.98,           9,       1.15,       17.01,        0.30,       19.50,     510,       0
+# NOTE: This puma_clustered series believed to be in error, a repeat
+# of the puma branch. See siege.log.just-puma-clustered instead
+# for repeat run of puma_clustered.
 **** puma_clustered ****
 2013-06-24 23:01:01,     70,      29.92,           1,       0.43,        2.34,        0.03,        1.00,      70,       0
 2013-06-24 23:01:41,    161,      29.97,           3,       0.37,        5.37,        0.10,        1.98,     161,       0
