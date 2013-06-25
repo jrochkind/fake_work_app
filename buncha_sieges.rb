@@ -25,7 +25,7 @@ branches.each do |branch|
   puts heroku_push_cmd
   `#{heroku_push_cmd}`
   unless $?.exitstatus == 0
-   abort("Git push to heroku of #{branch} failed, we're aborting the whole thing man, you deal with it!") 
+   abort("Git push to heroku of #{branch} failed, we're aborting the whole thing duder, you deal with it!") 
   end
 
    sleep(12) # give app a bit of time to get comfortable. superstitious much?
