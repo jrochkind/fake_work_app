@@ -22,6 +22,7 @@ end
 branches.each do |branch|
   
   heroku_push_cmd = "git push -f heroku origin/#{branch}:master"
+  puts heroku_push_cmd
   `#{heroku_push_cmd}`
   unless $?.exitstatus == 0
    abort("Git push to heroku of #{branch} failed, we're aborting the whole thing man, you deal with it!") 
