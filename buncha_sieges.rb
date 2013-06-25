@@ -33,7 +33,7 @@ branches.each do |branch|
    1.upto(max_conc) do |concurrency|
      sleep(10) # give it a breather so everything gets through the system!
      marker_arg = (concurrency == 1) ? "-m \"#{branch}\"" : ""
-     command = "siege -b -c#{concurrency} -t30s http://#{heroku_app}.herokuapp.com/fake_work?#{query} -l#{logfile} #{marker_arg}"
+     command = "siege -b -c#{concurrency} -t30s \"http://#{heroku_app}.herokuapp.com/fake_work?#{query}\" -l#{logfile} #{marker_arg}"
      puts command
      `#{command}`
    end 
