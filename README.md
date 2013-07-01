@@ -2,9 +2,9 @@
 * Or, *Comparing request concurrency models*
 * Or, *How I learned to stop worrying about the GIL and love multi-threaded concurrent request dispatch*
 
-by Jonathan Rochkind, http://bibwild.wordpress.com
+by Jonathan Rochkind, http://bibwild.wordpress.com?
 
-Benchmarking of this sort can be tricky to do validly, and ends up depending on assumptions -- explicit and implicit -- of your model and environment. Even trickier when concurrency is involved. This should be considered preliminary results, here submitted for peer review to the community. 
+Benchmarking of this sort can be tricky to do validly, and ends up depending on assumptions -- explicit and implicit -- of your model and environment. Even trickier when concurrency is involved. This should be considered preliminary results, here submitted for peer review to the community. ([hackernews thread](https://news.ycombinator.com/item?id=5970821))
 
 I was interested in
 * MRI 1.9.3 (yes, MRI, with the GIL),
@@ -607,7 +607,7 @@ And probably more I haven't thought of.
 
 But I'm kind of worn out already, and you probably are too reading all of this!  
 
-So feedback is very welcome, on potential problems, improvements, etc. (hackernews thread) -- but I might not have the energy to do more tests myself. I tried to make everything I've done here both transparent and as easily reproducible-with-improvements by someone else as possible: Take my code, please!  (I wonder if heroku would be interested in spending their paid staff time on further investigations using more complex heroku stacks?)
+So feedback is very welcome, on potential problems, improvements, etc. ([hackernews thread](https://news.ycombinator.com/item?id=5970821)) -- but I might not have the energy to do more tests myself. I tried to make everything I've done here both transparent and as easily reproducible-with-improvements by someone else as possible: Take my code, please!  (I wonder if heroku would be interested in spending their paid staff time on further investigations using more complex heroku stacks?)
 
 But at least, this makes puma _awfully enticing_ doesn't it?  It sure looks like hybrid/clustered/multi-worker puma is likely to provide significant advantage for an io-bound app, as most web apps are. **Yes**, even, or maybe _especially_ under GIL'd MRI -- at least if your app is mostly IO-bound, and can run safely under multi-threaded dispatch.  And especially with puma's hybrid/clustered mode, multiple worker processes each of which is multi-threaded, which is pretty optimal for a GIL'd server, it turns out.  puma: ain't just for jruby!   
 
@@ -615,3 +615,5 @@ But at least, this makes puma _awfully enticing_ doesn't it?  It sure looks like
 * But the possible performance gains are so great (yeah, even under MRI), that it's worth investigating. The more people that go down this road, the more bugs will be found and fixed, the mroe best practices will be established, the more stable all of this will get. 
 
 I am hoping to raise the level of discussion and interest in multi-threaded rails dispatch in general, and the 'hybrid' dispatch mode offered by Passenger Enterprise and puma in particular.  **multi-threaded request dispatch can definitely matter, even in MRI** (Thanks to evanphx for writing puma giving us a robust modern multi-threaded rack server; and the puma clustered/hybrid mode, giving us a free app server that does it! And rails team for making rails4 always-on suitable for multi-threaded request dispatch)  
+
+[hackernews thread](https://news.ycombinator.com/item?id=5970821)
