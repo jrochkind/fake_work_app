@@ -2,7 +2,7 @@
 * Or, *Comparing request concurrency models*
 * Or, *How I learned to stop worrying about the GIL and love multi-threaded concurrent request dispatch*
 
-by Jonathan Rochkind, http://bibwild.wordpress.com?
+by Jonathan Rochkind, http://bibwild.wordpress.com
 
 Benchmarking of this sort can be tricky to do validly, and ends up depending on assumptions -- explicit and implicit -- of your model and environment. Even trickier when concurrency is involved. This should be considered preliminary results, here submitted for peer review to the community. ([hackernews thread](https://news.ycombinator.com/item?id=5970821))
 
