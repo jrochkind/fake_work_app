@@ -526,7 +526,7 @@ There's probably some formula involving cpu and iowait time, number of cores ava
 
 After the last paragraph, I realized I really wanted the perspective you can get by doing what [Ylan Segal did](http://ylan.segal-family.com/blog/2013/05/20/unicorn-vs-puma-redux/), using siege, varying the amounts of concurrency and graphing it.
 
-So I worked out a [buncha_siege.rb](./buncha_siege.rb) script to run a whole buncha sieges like Ylan did. Hacked it until it worked. Waited a couple hours for it to run all it's cases. Took me a few (lengthy) iterations to get it working as expected. 
+So I worked out a [buncha_sieges.rb](./buncha_sieges.rb) script to run a whole buncha sieges like Ylan did. Hacked it until it worked. Waited a couple hours for it to run all it's cases. Took me a few (lengthy) iterations to get it working as expected. 
 
 In which I noticed that running the same load at different times can indeed produce different numbers, confirming results that variance in environment (network, herkou/aws load, etc) can produce variance in results. Perhaps ideally one would need to run even longer tests, or multiple tests at different times and aggregate them, to try and reduce this variance. But I choose not to spend the extra time on that at present. 
 
