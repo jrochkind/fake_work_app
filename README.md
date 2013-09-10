@@ -15,7 +15,7 @@ I was interested in
 
 It appears that [Puma](https://github.com/puma/puma) provides the best performance characteristics. By far. Especially under [puma 2.x "clustered"](https://github.com/puma/puma#clustered-mode) hybrid multi-process/multi-threaded mode, but even under single-process multi-threaded mode. Yes, even for MRI with the GIL, _for an IO-bound app_.
 
-* _For IO-bound apps_, you can likely get a lot more out of your heroku web dynos with multi-threaded request dispatch -- that is, puma and (rails3) config.threadsafe! , using puma's new clustered mode for multiple workers as well.  The more I/O-waiting your app does as a proportion of it's response time, the higher the likely advantage; advantage doesn't dissappear unless you have really minimal iowait.
+* _For IO-bound apps_, you can likely get a lot more out of your heroku web dynos with multi-threaded request dispatch -- that is, puma and (rails3) config.threadsafe! , using puma's new clustered mode for multiple workers as well.  The more I/O-waiting your app does as a proportion of its response time, the higher the likely advantage; advantage doesn't disappear unless you have really minimal iowait.
 
 **Multi-threaded request dispatch is not just for jruby.**  I am hoping this discussion increases interest and experimentation with multi-threading under MRI, especially multi-threaded request dispatch of web apps.
 
@@ -43,7 +43,7 @@ Both multi-process model and multi-thread model have plusses and minuses.
 * The multi-thread model does require the application code itself to be thread-safe under multi-threaded request dispatching. Which basically just means avoiding or synchronizing on writing to any global/class-level state. And the multi-thread model can only make use of one CPU under MRI.
 * But the multi-process model can't handle nearly as much concurrency without using gigantic amounts of RAM. Threads were originally invented as a lighter-weight method of concurrency than processes, even in a single-CPU-core world.
 
-Additionally, [there is what one of the authors of Phusion Passenger called a "hybrid model"](http://stackoverflow.com/questions/4113299/ruby-on-rails-server-options), where you have multiple worker processes, each of which dispatches multi-threaded. This has it's own plusses and minuses -- but may make a lot of sense for MRI with the GIL specifically, as you can have one process per core to try and maximize use of cores even under MRI; but then have each process dispatching multi-threaded, to maximize throughput under I/O waiting, and even out response times.
+Additionally, [there is what one of the authors of Phusion Passenger called a "hybrid model"](http://stackoverflow.com/questions/4113299/ruby-on-rails-server-options), where you have multiple worker processes, each of which dispatches multi-threaded. This has its own plusses and minuses -- but may make a lot of sense for MRI with the GIL specifically, as you can have one process per core to try and maximize use of cores even under MRI; but then have each process dispatching multi-threaded, to maximize throughput under I/O waiting, and even out response times.
 
 * That link above is worth following up for another explanation of all this, if you're still confused and want it in someone else's words.
 * Since that Stack Overflow answer above was written, a major player using this 'hybrid' model in addition to Phusion Passenger Enterprise has arrived: [Puma 2.x with "clustered" mode](https://github.com/puma/puma#clustered-mode), puma 2.0 released april 29 2013.   In Phusion Passenger, the hybrid model is only available in the non-free Enterprise variant; Puma is in general more realistic to run on heroku. (I do not believe you can run passenger on heroku, at least not in any way that would make sense). Puma's new support for this mode hasn't gotten as much attention as I would have expected.
@@ -253,9 +253,9 @@ Apart from explanations, as far as actual use would be concerned --  yeah, this 
 
 ## Not interested: thin with an evented web app
 
-Thin is really made for another concurrency mode, 'evented'.  If our simulated I/O with 'sleep' used an EventMachine loop to implement it's sleep instead, I'd predict thin would shine.
+Thin is really made for another concurrency mode, 'evented'.  If our simulated I/O with 'sleep' used an EventMachine loop to implement its sleep instead, I'd predict thin would shine.
 
-But that's the thing, to apply the evented concurrency model at the _application level_ though, to make our Rails app actually benefit from it in these terms -- it requires every part of the app that deals with I/O to be written specially.  Not just the actual HTTP client/server interactions, but database queries, third party API's, etc. For instance using alternate versions of various gems, which can go wrong in novel and unfamiliar ways.  I don't consider this feasible for a Rails app, and think that's why despite some attention over the last few years, it hasn't caught on much for Rails apps, and some have [changed their minds about it's general utility](http://www.slideshare.net/KyleDrake/hybrid-concurrency-patterns).  I am not interested in it. It's a non-starter for me. (But others have disagreed; feel free to benchmark it yourself if you like!)
+But that's the thing, to apply the evented concurrency model at the _application level_ though, to make our Rails app actually benefit from it in these terms -- it requires every part of the app that deals with I/O to be written specially.  Not just the actual HTTP client/server interactions, but database queries, third party API's, etc. For instance using alternate versions of various gems, which can go wrong in novel and unfamiliar ways.  I don't consider this feasible for a Rails app, and think that's why despite some attention over the last few years, it hasn't caught on much for Rails apps, and some have [changed their minds about its general utility](http://www.slideshare.net/KyleDrake/hybrid-concurrency-patterns).  I am not interested in it. It's a non-starter for me. (But others have disagreed; feel free to benchmark it yourself if you like!)
 
 Don't get me wrong, there's a place for reactor-evented code in ruby, mainly in specialized, technical, encapsulated places. For instance, [Passenger 3.x now uses an "evented I/O core"](http://blog.phusion.nl/category/passenger/phusion-passenger-3/); bully for it; but it's basically a hidden implementation detail, designed to improve performance of the internal passenger request queue -- but invisible to the app you are deploying and requiring no changes in it. Celluloid similarly uses a reactor pattern 'under the hood' for performance of it's internals, in ways kept invisible to actual Celluloid client code.   thin might do the same thing... but if it does, it hasn't helped our ordinary non-rewritten-with-EventMachine Rails app much, has it?
 
@@ -307,7 +307,7 @@ The median is not great, at 2x serial response time,  about the same as WEBrick.
 
 We're going to use [Heroku's recommended Unicorn configuration](https://devcenter.heroku.com/articles/rails-unicorn) with 3 worker processes.
 
-Unicorn can't do multi-threaded request dispatch, so while we left `config.threadsafe!` on in our app, it wont' actually do anything, each Unicorn worker will still keep requests in a queue and only let the app have them one at a time, serially.  yeah, that kind of shows.
+Unicorn can't do multi-threaded request dispatch, so while we left `config.threadsafe!` on in our app, it won't actually do anything, each Unicorn worker will still keep requests in a queue and only let the app have them one at a time, serially.  yeah, that kind of shows.
 
 ```
 $ ab -n 500 -c 10 http://sleepy-stream-3236.herokuapp.com/fake_work
@@ -526,7 +526,7 @@ There's probably some formula involving cpu and iowait time, number of cores ava
 
 After the last paragraph, I realized I really wanted the perspective you can get by doing what [Ylan Segal did](http://ylan.segal-family.com/blog/2013/05/20/unicorn-vs-puma-redux/), using siege, varying the amounts of concurrency and graphing it.
 
-So I worked out a [buncha_sieges.rb](./buncha_sieges.rb) script to run a whole buncha sieges like Ylan did. Hacked it until it worked. Waited a couple hours for it to run all it's cases. Took me a few (lengthy) iterations to get it working as expected.
+So I worked out a [buncha_sieges.rb](./buncha_sieges.rb) script to run a whole buncha sieges like Ylan did. Hacked it until it worked. Waited a couple hours for it to run all its cases. Took me a few (lengthy) iterations to get it working as expected.
 
 In which I noticed that running the same load at different times can indeed produce different numbers, confirming results that variance in environment (network, herkou/aws load, etc) can produce variance in results. Perhaps ideally one would need to run even longer tests, or multiple tests at different times and aggregate them, to try and reduce this variance. But I choose not to spend the extra time on that at present.
 
@@ -569,7 +569,7 @@ We expect puma to do even much worse comparatively. But will it still outperform
 
 ![chart](https://raw.github.com/jrochkind/fake_work_app/master/buncha_siege_logs/heroku_siege_100_1-June-26-1018.png)
 
-And indeed the advantages of multi-threaded request dispatch disappear under completely cpu-bound app, and puma loses it's advantage. The results here are such a mish-mash that we can't say much more than "puma loses it's advantage," it's not clear that unicorn takes any advantage either.   (Puma 3 workers seems to beat Unicorn 3 workers, but Unicorn 4 workers seems to beat--or is that just be even with--puma 4, what?)
+And indeed the advantages of multi-threaded request dispatch disappear under completely cpu-bound app, and puma loses its advantage. The results here are such a mish-mash that we can't say much more than "puma loses its advantage," it's not clear that unicorn takes any advantage either.   (Puma 3 workers seems to beat Unicorn 3 workers, but Unicorn 4 workers seems to beat--or is that just be even with--puma 4, what?)
 
 Of course, it is going to be the rare web app that is so thoroughly cpu-bound as our simulation app here.
 
@@ -597,7 +597,7 @@ I'm not going to include the charts here, we're already getting to information o
 * There are many more experiments that could be done, varying even more factors.
 * Have I _really_ simulated cpu and iowait effectively?
 * What are actual realistic/typical iowait/cpu ratios, and overall response times, for real world apps? Have I spent too much time on unrealistically slow app profiles
-* Is unrelated environmental variation (network, physical host load, etc) too much of a problem effecting our results? One  might have to run tests over a much longer period of time, or multiple times accross days and aggregate results, to try and even out background variation.
+* Is unrelated environmental variation (network, physical host load, etc) too much of a problem affecting our results? One might have to run tests over a much longer period of time, or multiple times across days and aggregate results, to try and even out background variation.
   * I think maybe I made a mistake having simulator app return 20k response, which is going to end up making it more susceptible to network variation. Perhaps it should have just returned a super short response?
 * For really testing a scenario similar to the 'heroku routing debacle', you need _uneven_ application response time, but my mock app takes pretty much the same amount of time (~300ms plus overhead) every time. I didn't have the gumption to rig up a test where it varied, but still averaged out as expected, or whatever.
 * Not to mention more than one heroku dyno to actually bring the heroku router into play.
